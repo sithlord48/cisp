@@ -1,0 +1,40 @@
+/*
+    Cisp -- Common Input Sharing Parts
+    Copyright (C) 2024 Cisp Developers
+    Copyright (C) InputLeap contributors
+
+    This package is free software; you can redistribute it and/or
+    modify it under the terms of the GNU General Public License
+    found in the file LICENSE that should have accompanied this file.
+
+    This package is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+#pragma once
+
+namespace cisp {
+
+/*!
+Blocks the calling thread for \c timeout seconds.  If
+\c timeout < 0.0 then the call returns immediately.  If \c timeout
+== 0.0 then the calling thread yields the CPU.
+
+(cancellation point)
+*/
+void this_thread_sleep(double timeout);
+
+
+//! Get the current time
+/*!
+Returns the number of seconds since some arbitrary starting time.
+This should return as high a precision as reasonable.
+*/
+double current_time_seconds();
+
+} // namespace cisp

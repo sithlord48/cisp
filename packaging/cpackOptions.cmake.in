@@ -1,0 +1,49 @@
+#This File is generated at CONFIGURE time
+#This file is run at CPACK Time
+
+#Do not set CPACK used CMAKE_* Vars here
+#    some Generators will fail if you do
+set(BASE_SOURCE_DIR @CMAKE_SOURCE_DIR@)
+## Additional targets to deploy on windows
+#set(ZLIB_LIB @ZLIB_TARGET@)
+##
+set(TARGET_FILES @TARGET_FILES@)
+
+#Get Target Info from project
+set(RUNTIME_DEPENDS_PATH @RUNTIME_DEPENDS_PATH@)
+foreach(target_file ${TARGET_FILES})
+    file(STRINGS ${target_file} target)
+    list(APPEND TARGETS ${target})
+endforeach()
+
+#Function run_windeploy_qt
+#Run windepoy_qt for a target output into the RUNTIME_DEPENDS_PATH
+#target - Full path of a build target to use.
+# For all targets a qml dir will be guessed based on the name of the target
+
+#Gather up Dependencies.
+if(WIN32 AND NOT DEPENDENCY_CHECKED)
+    execute_process(COMMAND "${CMAKE_COMMAND}" -E remove_directory "${RUNTIME_DEPENDS_PATH}" OUTPUT_QUIET)
+    message(STATUS "Gathering Win32 Dependencies")
+    set(CMAKE_INSTALL_SYSTEM_RUNTIME_COMPONENT ${RUNTIME_DEPENDS_PATH})
+    set(CMAKE_INSTALL_UCRT_LIBRARIES TRUE)
+    include(InstallRequiredSystemLibraries)
+# Additional Depends can be copied at this time
+#    if(ZLIB_LIB)
+#        message(STATUS "CP ZLIBS: ${ZLIB_LIB}")
+#        file( COPY ${ZLIB_LIB} DESTINATION ${RUNTIME_DEPENDS_PATH})
+#    endif()
+    foreach(target ${TARGETS})
+#        run_windeploy_qt(${target})
+    endforeach()
+    set(DEPENDENCY_CHECKED TRUE PARENT_SCOPE)
+endif()
+
+#Make sure the IFW Name ends with -installer.
+if(CPACK_GENERATOR MATCHES IFW|WIX|NSIS)
+    set(CPACK_PACKAGE_FILE_NAME ${CPACK_PACKAGE_FILE_NAME}-installer)
+endif()
+
+if(CPACK_GENERATOR MATCHES DEB|WIX|RPM)
+    set(CPACK_PACKAGE_VERSION @CMAKE_PROJECT_VERSION@)
+endif()
